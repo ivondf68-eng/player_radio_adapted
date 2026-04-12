@@ -13,7 +13,7 @@
       color: white;
     }
     header {
-      background: url(../img/bandeirars.jpg) center/cover no-repeat;
+      background: url(img/bandeirars.jpg) center/cover no-repeat;
       padding: 15px;
       display: flex;
       align-items: center;
@@ -84,8 +84,8 @@
 <body>
 
 <header>
-  <img id="capa" src="../img/logo.jpg" alt="Capa do álbum"
-    onerror="this.onerror=null;this.src='../img/logo.jpg'">
+  <img id="capa" src="img/logo.jpg" ...
+    onerror="this.onerror=null;this.src='img/logo.jpg'">
 
   <div class="info">
     <h2 id="cantor">Rádio Estância da Nostalgia</h2>
@@ -112,7 +112,7 @@
   const STREAM_URL  = "https://everest.servercast.com.br:1290/;?type=http&nocache=";
   const META_URL    = "/api/meta";
   const LASTFM_KEY  = "SUA_CHAVE_LASTFM_AQUI";
-  const CAPA_PADRAO = "../img/logo.jpg";
+  const CAPA_PADRAO = "img/logo.jpg";
 
   const audio     = document.getElementById("player");
   const cantorEl  = document.getElementById("cantor");

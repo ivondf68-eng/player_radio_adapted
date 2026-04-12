@@ -3,7 +3,7 @@
   "builds": [
     { "src": "api/*.js", "use": "@vercel/node" },
     { "src": "index.html", "use": "@vercel/static" },
-    { "src": "capa.jpg", "use": "@vercel/static" }
+    { "src": "img/**", "use": "@vercel/static" }
   ],
   "routes": [
     { "src": "/api/meta", "dest": "/api/meta.js" },

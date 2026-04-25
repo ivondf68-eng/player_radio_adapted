@@ -80,6 +80,20 @@
       gap: 6px;
     }
     #clock i { font-size: 16px; }
+    #nome-radio {
+      font-family: 'Impact', sans-serif;
+      position: absolute;
+      right: 50px;
+      top: 50%;
+      transform: translateY(-60%);
+      color: #ffffff;
+      font-size: 30px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      text-align: center;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.6);
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
@@ -102,6 +116,9 @@
 
     <div id="status">⏸ Parado</div>
   </div>
+
+  <!-- Nome da rádio centralizado à direita -->
+  <div id="nome-radio">RÁDIO ESTÂNCIA DA NOSTALGIA</div>
 
   <div id="clock">
     <i class="fa-solid fa-clock"></i>
@@ -129,14 +146,6 @@
   let metaInterval = null;
   let ultimoTitulo = "";
 
-  /* ══════════════════════════════════════════
-     BUSCA DE CAPA EM CASCATA
-     1. iTunes
-     2. MusicBrainz + Cover Art Archive
-     3. Last.fm
-     4. Capa padrão
-  ══════════════════════════════════════════ */
-
   function setCapa(url) {
     const img = new Image();
     img.onload  = () => { capaEl.src = url; };
@@ -144,7 +153,6 @@
     img.src = url;
   }
 
-  /* 1. iTunes */
   function buscarItunes(artista, titulo) {
     const q = encodeURIComponent(artista + " " + titulo);
     return fetch("https://itunes.apple.com/search?term=" + q + "&media=music&limit=1&entity=song")
@@ -160,7 +168,6 @@
       .catch(() => false);
   }
 
-  /* 2. MusicBrainz + Cover Art Archive */
   function buscarMusicBrainz(artista, titulo) {
     const q = encodeURIComponent('recording:"' + titulo + '" AND artist:"' + artista + '"');
     return fetch("https://musicbrainz.org/ws/2/recording/?query=" + q + "&limit=1&fmt=json", {
@@ -179,7 +186,6 @@
       .catch(() => false);
   }
 
-  /* 3. Last.fm */
   function buscarLastFm(artista, titulo) {
     if (LASTFM_KEY === "SUA_CHAVE_LASTFM_AQUI") return Promise.resolve(false);
     const url = "https://ws.audioscrobbler.com/2.0/?method=track.getInfo"
@@ -203,7 +209,6 @@
       .catch(() => false);
   }
 
-  /* Cascata completa */
   async function buscarCapa(artista, titulo) {
     if (!artista && !titulo) return;
     const encontrouItunes = await buscarItunes(artista, titulo);
@@ -214,10 +219,6 @@
     if (encontrouLFM) return;
     capaEl.src = CAPA_PADRAO;
   }
-
-  /* ══════════════════════════════════════════
-     METADADOS VIA PROXY VERCEL
-  ══════════════════════════════════════════ */
 
   function fetchMeta() {
     fetch(META_URL + "?t=" + Date.now(), { cache: "no-store" })
@@ -236,10 +237,6 @@
       })
       .catch(() => {});
   }
-
-  /* ══════════════════════════════════════════
-     CONTROLES
-  ══════════════════════════════════════════ */
 
   playPause.addEventListener("click", () => {
     if (!playing) {
@@ -289,10 +286,6 @@
       }, 3000);
     }
   });
-
-  /* ══════════════════════════════════════════
-     RELÓGIO
-  ══════════════════════════════════════════ */
 
   function updateClock() {
     const now = new Date();

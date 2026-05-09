@@ -134,6 +134,14 @@
   const META_URL    = "/api/meta";
   const LASTFM_KEY  = "SUA_CHAVE_LASTFM_AQUI";
   const CAPA_PADRAO = "../img/logo.png";
+  const REDES_ARTISTAS = {
+    "Baitaca":         "https://www.instagram.com/baitacaoficial/",
+    "Os Serranos":     "https://www.facebook.com/osserranosoficial",
+    "Teixeirinha":     "https://www.youtube.com/@teixeirinha",
+    "Os Mirins":       "https://www.instagram.com/osmirinsfandango/",
+    "Adair De Freitas":"https://www.facebook.com/adairdefreitas",
+    // adicione quantos quiser...
+};
 
   const audio     = document.getElementById("player");
   const cantorEl  = document.getElementById("cantor");
@@ -231,7 +239,13 @@
         const titulo  = data.titulo  || "";
         const chave   = artista + "||" + titulo;
         if (!titulo) return;
-        cantorEl.textContent = artista || "Rádio Estância da Nostalgia";
+        const nomeExibido = artista || "Rádio Estância da Nostalgia";
+        const linkArtista = artista && REDES_ARTISTAS[artista];
+        if (linkArtista) {
+          cantorEl.innerHTML = `<a href="${linkArtista}" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;cursor:pointer;">${nomeExibido}</a>`;
+        } else {
+          cantorEl.textContent = nomeExibido;
+        }
         nomeEl.textContent   = titulo;
         if (chave !== ultimoTitulo) {
           ultimoTitulo = chave;

@@ -135,7 +135,7 @@
   const LASTFM_KEY  = "SUA_CHAVE_LASTFM_AQUI";
   const CAPA_PADRAO = "../img/logo.png";
   const REDES_ARTISTAS = {
-    "Baitaca":         "https://www.instagram.com/baitacaoficial/",
+    "Baitaca":         "https://www.instagram.com/baitaca_oficial/",
     "Os Serranos":     "https://www.facebook.com/osserranosoficial",
     "Teixeirinha":     "https://www.youtube.com/@teixeirinha",
     "Os Mirins":       "https://www.instagram.com/osmirinsfandango/",
@@ -242,7 +242,7 @@
         const nomeExibido = artista || "Rádio Estância da Nostalgia";
         const linkArtista = artista && REDES_ARTISTAS[artista];
         if (linkArtista) {
-          cantorEl.innerHTML = `<a href="${linkArtista}" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;cursor:pointer;">${nomeExibido}</a>`;
+          cantorEl.innerHTML = `<a href="${linkArtista}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;cursor:pointer;">${nomeExibido}</a>`;
         } else {
           cantorEl.textContent = nomeExibido;
         }

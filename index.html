@@ -135,12 +135,14 @@
   const LASTFM_KEY  = "SUA_CHAVE_LASTFM_AQUI";
   const CAPA_PADRAO = "../img/logo.png";
   const REDES_ARTISTAS = {
-    "Adair De Freitas":"https://www.instagram.com/adairdefreitasoficial/",
+    "Adair de Freitas":"https://www.instagram.com/adairdefreitasoficial/",
+    "Alemão Preto":       "https://www.instagram.com/alemaopretooficiall/",
     "Baitaca":         "https://www.instagram.com/baitaca_oficial/",
     "César Oliveira E Rogério Melo":"https://www.instagram.com/cesarerogerio/",
     "Chiquito E Bordoneio":   "https://www.instagram.com/chiquitoebordoneio/",
     "Cristiano Quevedo": "https://www.instagram.com/cristianoquevedo/",
     "Daniel Torres":     "https://www.instagram.com/danieltorres.cantor/",
+    "Ênio Medeiros":       "https://www.instagram.com/eniomedeirosoficial/",
     "Gaiteiro Da Palmeira":   "https://www.facebook.com/gaiteirodapalmeira",
     "Gaúcho Da Fronteira":"https://www.instagram.com/gauchodafronteira/",
     "Gonzaga Dos Reis":     "https://www.letras.mus.br/gonzaga-dos-reis/discografia/",
@@ -182,6 +184,38 @@
   let metaInterval = null;
   let ultimoTitulo = "";
 
+  /* ══════════════════════════════════════════
+     MONTA HTML DO ARTISTA
+     Divide por "ft." e linka cada nome
+  ══════════════════════════════════════════ */
+  function montarHtmlArtista(artistaRaw) {
+    if (!artistaRaw) return "Rádio Estância da Nostalgia";
+
+    // Separa pelo "ft." com variações: "ft.", "ft", "Ft.", "FT."
+    const partes = artistaRaw.split(/\s+[Ff][Tt]\.?\s+/);
+
+    const htmlPartes = partes.map((nome, idx) => {
+      const nomeTrimado = nome.trim();
+      const link = REDES_ARTISTAS[nomeTrimado];
+
+      // Se tem link cadastrado, vira âncora clicável
+      const html = (link !== undefined && link !== "")
+        ? `<a class="link-artista" href="${link}" target="_blank" rel="noopener">${nomeTrimado}</a>`
+        : `<span style="color:#fff;">${nomeTrimado}</span>`;
+
+      // Adiciona separador "ft." entre os nomes
+      return idx < partes.length - 1
+        ? html + `<span class="ft-sep"> ft. </span>`
+        : html;
+    });
+
+    return htmlPartes.join("");
+  }
+
+  /* ══════════════════════════════════════════
+     BUSCA DE CAPA EM CASCATA
+     Usa só o artista principal (antes do ft.)
+  ══════════════════════════════════════════ */
   function setCapa(url) {
     const img = new Image();
     img.onload  = () => { capaEl.src = url; };
@@ -189,8 +223,12 @@
     img.src = url;
   }
 
+  function artistaPrincipal(artista) {
+    return artista.split(/\s+[Ff][Tt]\.?\s+/)[0].trim();
+  }
+
   function buscarItunes(artista, titulo) {
-    const q = encodeURIComponent(artista + " " + titulo);
+    const q = encodeURIComponent(artistaPrincipal(artista) + " " + titulo);
     return fetch("https://itunes.apple.com/search?term=" + q + "&media=music&limit=1&entity=song")
       .then(r => r.json())
       .then(data => {
@@ -205,7 +243,8 @@
   }
 
   function buscarMusicBrainz(artista, titulo) {
-    const q = encodeURIComponent('recording:"' + titulo + '" AND artist:"' + artista + '"');
+    const principal = artistaPrincipal(artista);
+    const q = encodeURIComponent('recording:"' + titulo + '" AND artist:"' + principal + '"');
     return fetch("https://musicbrainz.org/ws/2/recording/?query=" + q + "&limit=1&fmt=json", {
       headers: { "User-Agent": "RadioWebPlayer/1.0 (contato@exemplo.com)" }
     })
@@ -224,9 +263,10 @@
 
   function buscarLastFm(artista, titulo) {
     if (LASTFM_KEY === "SUA_CHAVE_LASTFM_AQUI") return Promise.resolve(false);
+    const principal = artistaPrincipal(artista);
     const url = "https://ws.audioscrobbler.com/2.0/?method=track.getInfo"
       + "&api_key=" + LASTFM_KEY
-      + "&artist=" + encodeURIComponent(artista)
+      + "&artist=" + encodeURIComponent(principal)
       + "&track="  + encodeURIComponent(titulo)
       + "&format=json";
     return fetch(url)
@@ -256,6 +296,9 @@
     capaEl.src = CAPA_PADRAO;
   }
 
+  /* ══════════════════════════════════════════
+     METADADOS VIA PROXY VERCEL
+  ══════════════════════════════════════════ */
   function fetchMeta() {
     fetch(META_URL + "?t=" + Date.now(), { cache: "no-store" })
       .then(r => r.json())
@@ -264,14 +307,10 @@
         const titulo  = data.titulo  || "";
         const chave   = artista + "||" + titulo;
         if (!titulo) return;
-        const nomeExibido = artista || "Rádio Estância da Nostalgia";
-        const linkArtista = artista && REDES_ARTISTAS[artista];
-        if (linkArtista) {
-          cantorEl.innerHTML = `<a href="${linkArtista}" target="_blank" rel="noopener" style="color:#0f0;text-decoration:none;font-weight:bold;cursor:pointer;">${nomeExibido}</a>`;
-        } else {
-          cantorEl.textContent = nomeExibido;
-        }
-        nomeEl.textContent   = titulo;
+
+        cantorEl.innerHTML = montarHtmlArtista(artista);
+        nomeEl.textContent = titulo;
+
         if (chave !== ultimoTitulo) {
           ultimoTitulo = chave;
           buscarCapa(artista, titulo);
@@ -280,6 +319,9 @@
       .catch(() => {});
   }
 
+  /* ══════════════════════════════════════════
+     CONTROLES
+  ══════════════════════════════════════════ */
   playPause.addEventListener("click", () => {
     if (!playing) {
       audio.src    = STREAM_URL + Date.now();
@@ -329,6 +371,9 @@
     }
   });
 
+  /* ══════════════════════════════════════════
+     RELÓGIO
+  ══════════════════════════════════════════ */
   function updateClock() {
     const now = new Date();
     timeText.textContent =

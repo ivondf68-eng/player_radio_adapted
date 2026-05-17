@@ -97,6 +97,12 @@
     @media (max-width: 1024px) {
       #nome-radio { display: none; }
     }
+    a.link-artista {
+      color: #0f0;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -202,7 +208,7 @@
       // Se tem link cadastrado, vira âncora clicável
       const html = (link !== undefined && link !== "")
         ? `<a class="link-artista" href="${link}" target="_blank" rel="noopener">${nomeTrimado}</a>`
-        : `<span style="color:#fff;">${nomeTrimado}</span>`;
+        : `<span style="color:black;">${nomeTrimado}</span>`;
 
       // Adiciona separador "ft." entre os nomes
       return idx < partes.length - 1

@@ -14,7 +14,7 @@
       font-style: bold;
     }
     header {
-      background: url(../img/bandeirars.gif) center/cover no-repeat;
+      background: url(img/bandeirars.gif) center/cover no-repeat;
       padding: 15px;
       display: flex;
       align-items: center;
@@ -102,8 +102,8 @@
 <body>
 
 <header>
-  <img id="capa" src="../img/logo.png" alt="Capa do álbum"
-    onerror="this.onerror=null;this.src='../img/logo.png'">
+  <img id="capa" src="img/logo.png" alt="Capa do álbum"
+    onerror="this.onerror=null;this.src='img/logo.png'">
 
   <div class="info">
     <h2 id="cantor">Rádio Estância da Nostalgia</h2>
@@ -120,7 +120,6 @@
     <div id="status">⏸ Parado</div>
   </div>
 
-  <!-- Nome da rádio centralizado à direita -->
   <div id="nome-radio">RÁDIO ESTÂNCIA DA NOSTALGIA</div>
 
   <div id="clock">
@@ -130,10 +129,12 @@
 </header>
 
 <script>
+  // ── Configurações públicas (sem chaves de API) ───────────────────────────
   const STREAM_URL  = "https://everest.servercast.com.br:1290/;?type=http&nocache=";
   const META_URL    = "/api/meta";
-  const LASTFM_KEY  = "SUA_CHAVE_LASTFM_AQUI";
-  const CAPA_PADRAO = "../img/logo.png";
+  const CAPA_PADRAO = "img/logo.png";
+
+  // ── Links de redes sociais dos artistas ──────────────────────────────────
   const REDES_ARTISTAS = {
     "Adair de Freitas":"https://www.instagram.com/adairdefreitasoficial/",
     "Alemão Preto":       "https://www.instagram.com/alemaopretooficiall/",
@@ -211,25 +212,32 @@
   let ultimoTitulo = "";
 
   /* ══════════════════════════════════════════
+     SANITIZAÇÃO — evita XSS via dados do stream
+  ══════════════════════════════════════════ */
+  function sanitize(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML; // escapa <, >, &, ", '
+  }
+
+  /* ══════════════════════════════════════════
      MONTA HTML DO ARTISTA
-     Divide por "ft." e linka cada nome
+     Usa sanitize() em cada nome antes de injetar
   ══════════════════════════════════════════ */
   function montarHtmlArtista(artistaRaw) {
     if (!artistaRaw) return "Rádio Estância da Nostalgia";
 
-    // Separa pelo "ft." com variações: "ft.", "ft", "Ft.", "FT."
     const partes = artistaRaw.split(/\s+[Ff][Tt]\.?\s+/);
 
     const htmlPartes = partes.map((nome, idx) => {
       const nomeTrimado = nome.trim();
+      const nomeSanitizado = sanitize(nomeTrimado); // ← sanitização aqui
       const link = REDES_ARTISTAS[nomeTrimado];
 
-      // Se tem link cadastrado, vira âncora clicável
       const html = (link !== undefined && link !== "")
-        ? `<a class="link-artista" href="${link}" target="_blank" rel="noopener">${nomeTrimado}</a>`
-        : `<span style="color:black;">${nomeTrimado}</span>`;
+        ? `<a class="link-artista" href="${sanitize(link)}" target="_blank" rel="noopener noreferrer">${nomeSanitizado}</a>`
+        : `<span style="color:black;">${nomeSanitizado}</span>`;
 
-      // Adiciona separador "ft." entre os nomes
       return idx < partes.length - 1
         ? html + `<span class="ft-sep"> ft. </span>`
         : html;
@@ -239,8 +247,8 @@
   }
 
   /* ══════════════════════════════════════════
-     BUSCA DE CAPA EM CASCATA
-     Usa só o artista principal (antes do ft.)
+     CAPA — cascata iTunes → MusicBrainz
+     Last.fm agora é buscado no servidor (api/meta.js)
   ══════════════════════════════════════════ */
   function setCapa(url) {
     const img = new Image();
@@ -287,38 +295,21 @@
       .catch(() => false);
   }
 
-  function buscarLastFm(artista, titulo) {
-    if (LASTFM_KEY === "SUA_CHAVE_LASTFM_AQUI") return Promise.resolve(false);
-    const principal = artistaPrincipal(artista);
-    const url = "https://ws.audioscrobbler.com/2.0/?method=track.getInfo"
-      + "&api_key=" + LASTFM_KEY
-      + "&artist=" + encodeURIComponent(principal)
-      + "&track="  + encodeURIComponent(titulo)
-      + "&format=json";
-    return fetch(url)
-      .then(r => r.json())
-      .then(data => {
-        const images = data.track && data.track.album && data.track.album.image;
-        if (!images) return false;
-        const extralarge = images.find(i => i.size === "extralarge");
-        const imgUrl = extralarge && extralarge["#text"];
-        if (imgUrl && imgUrl.length > 0) {
-          setCapa(imgUrl);
-          return true;
-        }
-        return false;
-      })
-      .catch(() => false);
-  }
-
-  async function buscarCapa(artista, titulo) {
+  async function buscarCapa(artista, titulo, capaUrlServidor) {
     if (!artista && !titulo) return;
+
+    // 1) Capa já resolvida pelo servidor via Last.fm (chave fica no backend)
+    if (capaUrlServidor) {
+      setCapa(capaUrlServidor);
+      return;
+    }
+    // 2) iTunes
     const encontrouItunes = await buscarItunes(artista, titulo);
     if (encontrouItunes) return;
+    // 3) MusicBrainz
     const encontrouMB = await buscarMusicBrainz(artista, titulo);
     if (encontrouMB) return;
-    const encontrouLFM = await buscarLastFm(artista, titulo);
-    if (encontrouLFM) return;
+
     capaEl.src = CAPA_PADRAO;
   }
 
@@ -329,9 +320,10 @@
     fetch(META_URL + "?t=" + Date.now(), { cache: "no-store" })
       .then(r => r.json())
       .then(data => {
-        const artista = data.artista || "";
-        const titulo  = data.titulo  || "";
-        const chave   = artista + "||" + titulo;
+        const artista   = data.artista  || "";
+        const titulo    = data.titulo   || "";
+        const capaUrl   = data.capaUrl  || "";
+        const chave     = artista + "||" + titulo;
         if (!titulo) return;
 
         cantorEl.innerHTML = montarHtmlArtista(artista);
@@ -339,7 +331,7 @@
 
         if (chave !== ultimoTitulo) {
           ultimoTitulo = chave;
-          buscarCapa(artista, titulo);
+          buscarCapa(artista, titulo, capaUrl);
         }
       })
       .catch(() => {});

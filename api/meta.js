@@ -5,7 +5,7 @@ export default async function handler(req, res) {
     : [];
 
   const origin = req.headers.origin || "";
-  if (allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+  if (allowedOrigins.length === 0 || !origin || allowedOrigins.includes(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin || "*");
   } else {
     return res.status(403).json({ error: "Origem não permitida" });

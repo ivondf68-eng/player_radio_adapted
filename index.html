@@ -114,10 +114,10 @@
     <div class="controles">
       <i id="muteIcon" class="fa-solid fa-volume-high" title="Mudo"></i>
       <input type="range" id="volume" min="0" max="1" step="0.1" value="1" title="Volume">
-      <i id="playPause" class="fa-solid fa-play play" title="Play"></i>
+      <i id="playPause" class="fa-solid fa-stop stop" title="Pause"></i>
     </div>
 
-    <div id="status">⏸ Parado</div>
+    <div id="status">🔄 Conectando...</div>
   </div>
 
   <div id="nome-radio">RÁDIO ESTÂNCIA DA NOSTALGIA</div>
@@ -210,7 +210,7 @@
   const statusEl  = document.getElementById("status");
   const timeText  = document.getElementById("timeText");
 
-  let playing      = false;
+  let playing      = true;
   let metaInterval = null;
   let ultimoTitulo = "";
 
@@ -406,6 +406,20 @@
 
   fetchMeta();
   metaInterval = setInterval(fetchMeta, 10000);
+
+  audio.src    = STREAM_URL + Date.now();
+  audio.volume = parseFloat(volumeEl.value);
+  audio.play()
+    .then(() => {
+      playPause.className  = "fa-solid fa-stop stop";
+      statusEl.textContent = "▶ Ao vivo";
+    })
+    .catch(() => {
+      playing              = false;
+      playPause.className  = "fa-solid fa-play play";
+      statusEl.textContent = "▶ Clique para ouvir";
+      audio.src            = "";
+    });
 </script>
 
 </body>

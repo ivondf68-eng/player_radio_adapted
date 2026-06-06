@@ -236,7 +236,7 @@
   function montarHtmlArtista(artistaRaw) {
     if (!artistaRaw) return "Rádio Estância da Nostalgia";
 
-    const partes = artistaRaw.split(/\s*[&eE]\s*|\s+[Ff][Tt]\.?\s+/);
+    const partes = artistaRaw.split(/\s*&\s*/);
 
     const htmlPartes = partes.map((nome, idx) => {
       const nomeTrimado = nome.trim();

@@ -74,6 +74,22 @@
       gap: 6px;
     }
     #clock i { font-size: 16px; }
+    #dateText {
+      font-size: 13px;
+      font-weight: normal;
+      color: black;
+      margin-left: 4px;
+    }
+    @media (max-width: 600px) {
+      #clock {
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 2px;
+      }
+      #dateText {
+        margin-left: 0;
+      }
+    }
     a.link-artista {
       color: #0f0;
       text-decoration: none;
@@ -106,6 +122,7 @@
   <div id="clock">
     <i class="fa-solid fa-clock"></i>
     <span id="timeText"></span>
+    <span id="dateText"></span>
   </div>
 </header>
 
@@ -411,6 +428,13 @@
     timeText.textContent =
       String(now.getHours()).padStart(2, "0") + ":" +
       String(now.getMinutes()).padStart(2, "0");
+
+    const dias = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+    document.getElementById("dateText").textContent =
+      dias[now.getDay()] + ", " +
+      String(now.getDate()).padStart(2, "0") + "/" +
+      String(now.getMonth() + 1).padStart(2, "0") + "/" +
+      now.getFullYear();
   }
   setInterval(updateClock, 1000);
   updateClock();

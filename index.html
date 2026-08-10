@@ -286,7 +286,7 @@
 
       const html = (link !== undefined && link !== "")
         ? `<a class="link-artista" href="${sanitize(link)}" target="_blank" rel="noopener noreferrer">${nomeSanitizado}</a>`
-        : `<span style="color:black;">${nomeSanitizado}</span>`;
+        : `<span style="color:#000;">${nomeSanitizado}</span>`;
 
       return idx < partes.length - 1
         ? html + `<span class="ft-sep"> E </span>`

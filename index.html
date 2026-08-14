@@ -132,7 +132,7 @@
 
 <script>
   // ── Configurações públicas (sem chaves de API) ───────────────────────────
-  const STREAM_URL  = "https://everest.servercast.com.br:1290/;?type=http&nocache=";
+  const STREAM_URL  = process.env.STREAM;
   const META_URL    = "/api/meta";
   const CAPA_PADRAO = "img/logo.png";
 
@@ -191,6 +191,7 @@
     "Grupo Querência":     "https://www.instagram.com/grupoquerenciaoficial/",
     "Grupo Quero Quero":       "https://www.instagram.com/grupoqueroquero/",
     "Grupo Raça Gaúcha":       "https://www.youtube.com/watch?v=2iTZ6vYZFlg",
+    "Grupo Reponte":       "https://www.instagram.com/gruporeponteoficial/",
     "Grupo Rodeio":        "https://www.instagram.com/gruporodeio/",
     "Grupo Som do Sul":     "https://www.instagram.com/somdosuloficial/",
     "Grupo Tamoyo Show":       "https://open.spotify.com/intl-pt/artist/4rF8S5PYaJDk5sQXWgRLSu",

@@ -58,7 +58,14 @@
     }
     .controles i { font-size: 22px; cursor: pointer; color: #fff; }
     input[type="range"] { width: 80px; cursor: pointer; }
-    #playPause.stop { color: #000; }
+    #playBackground {
+      border-radius: 200px;
+      width: 40px;
+      text-align: center;
+      background-color: #000;
+      padding: 0.5em;
+    }
+    #playPause.stop { color: yellow; }
     #playPause.play { color: #0f0; }
     #status {
       font-size: 11px;
@@ -95,9 +102,12 @@
       }
     }
     @media (max-width: 370px){
-      #capa {
+      /* #capa {
         width: 100px;
         height: 100px;
+      } */
+      header {
+        flex-direction: column;
       }
     }
     a.link-artista {
@@ -124,7 +134,7 @@
     <div class="controles">
       <i id="muteIcon" class="fa-solid fa-volume-high" title="Mudo"></i>
       <input type="range" id="volume" min="0" max="1" step="0.1" value="1" title="Volume">
-      <i id="playPause" class="fa-solid fa-stop stop" title="Pause"></i>
+      <div id="playBackground"><i id="playPause" class="fa-solid fa-stop stop" title="Pause"></i></div>
     </div>
 
     <div id="status">🔄 Conectando...</div>

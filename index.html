@@ -14,109 +14,156 @@
       font-style: bold;
     }
     header {
+      --capa-size: 200px;
+      --gap: 15px;
       background: url(img/bandeirars.gif) center/cover no-repeat;
       padding: 10px;
-      display: flex;
+      display: grid;
+      grid-template-columns: var(--capa-size) 1fr;
+      grid-template-areas: "capa conteudo";
       align-items: center;
+      column-gap: var(--gap);
       position: relative;
       min-height: 230px;
     }
+
     #capa {
-      width: 200px;
-      height: 200px;
+      grid-area: capa;
+      width: var(--capa-size);
+      height: var(--capa-size);
       border-radius: 8px;
       object-fit: cover;
-      margin-right: 15px;
-      flex-shrink: 0;
       background: #111;
       transition: opacity 0.4s;
     }
+
+    .conteudo {
+      grid-area: conteudo;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      row-gap: 2px;
+    }
+    audio {
+      display: none;
+    }
+
+    .conteudo {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      row-gap: 0;
+    }
+
     .info {
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      flex: 1;
+      justify-content: flex-start;
       min-width: 0;
     }
+
+    .controles_status {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+  #cantor {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0 0 4px 0;
+    color: #000;
+    text-shadow: 0 1px 2px rgba(249, 247, 247, 0.955);
+  }
+  #musica {
+    font-size: 18px;
+    margin: 0 0 8px 0;
+    color: #000;
+    text-shadow: 0 1px 2px rgba(249, 247, 247, 0.955);
+  }
+  #musica:empty {
+    display: none;
+  }
+  .controles {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .controles i { font-size: 22px; cursor: pointer; color: #fff; }
+  input[type="range"] { width: 80px; cursor: pointer; }
+  #playBackground {
+    border-radius: 200px;
+    width: 40px;
+    text-align: center;
+    background-color: #000;
+    padding: 0.5em;
+  }
+  #playPause.stop { color: yellow; }
+  #playPause.play { color: #0f0; }
+  #status {
+    font-size: 11px;
+    color: rgba(255,255,255,0.7);
+    margin-top: 6px;
+    height: 14px;
+  }
+  #clock {
+    position: absolute;
+    bottom: 8px;
+    right: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    color: black;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  #clock i { font-size: 16px; }
+  #dateText {
+    font-size: 15px;
+    font-weight: normal;
+    color: black;
+    margin-left: 4px;
+  }
+  @media (max-width: 600px) {
+    #clock {
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
+    }
+    #dateText {
+      margin-left: 0;
+    }
+  }
+  @media (max-width: 370px){
+    header {
+      --capa-size: 150px;
+      grid-template-areas:
+        "capa info"
+        "controles controles";
+      row-gap: 6px;
+    }
+    .conteudo {
+      display: contents;
+    }
+    .info {
+      grid-area: info;
+    }
+    .controles_status {
+      grid-area: controles;
+    }
     #cantor {
-      font-size: 20px;
-      font-weight: bold;
-      margin: 0 0 4px 0;
-      color: #000;
-      text-shadow: 0 1px 2px rgba(249, 247, 247, 0.955);
+      font-size: 15px;
     }
     #musica {
-      font-size: 18px;
-      margin: 0 0 8px 0;
-      color: #000;
-      text-shadow: 0 1px 2px rgba(249, 247, 247, 0.955);
+      font-size: 13px;
     }
-    .controles {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .controles i { font-size: 22px; cursor: pointer; color: #fff; }
-    input[type="range"] { width: 80px; cursor: pointer; }
-    #playBackground {
-      border-radius: 200px;
-      width: 40px;
-      text-align: center;
-      background-color: #000;
-      padding: 0.5em;
-    }
-    #playPause.stop { color: yellow; }
-    #playPause.play { color: #0f0; }
-    #status {
-      font-size: 11px;
-      color: rgba(255,255,255,0.7);
-      margin-top: 6px;
-      height: 14px;
-    }
-    #clock {
-      position: absolute;
-      bottom: 8px;
-      right: 10px;
-      font-size: 16px;
-      font-weight: bold;
-      color: black;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    #clock i { font-size: 16px; }
-    #dateText {
-      font-size: 15px;
-      font-weight: normal;
-      color: black;
-      margin-left: 4px;
-    }
-    @media (max-width: 600px) {
-      #clock {
-        flex-direction: column;
-        align-items: flex-end;
-        gap: 2px;
-      }
-      #dateText {
-        margin-left: 0;
-      }
-    }
-    @media (max-width: 370px){
-      /* #capa {
-        width: 100px;
-        height: 100px;
-      } */
-      header {
-        flex-direction: column;
-      }
-    }
-    a.link-artista {
-      color: #0f0;
-      text-decoration: none;
-      font-weight: bold;
-      cursor: pointer;
-      text-shadow: 3px 2px 2px rgba(0, 0, 0, 0.45);
-    }
+  }
+  a.link-artista {
+    color: #0f0;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+    text-shadow: 3px 2px 2px rgba(0, 0, 0, 0.45);
+  }
   </style>
 </head>
 <body>
@@ -125,20 +172,23 @@
   <img id="capa" src="img/logo.png" alt="Capa do álbum"
     onerror="this.onerror=null;this.src='img/logo.png'">
 
-  <div class="info">
-    <h2 id="cantor">Rádio Estância da Nostalgia</h2>
-    <h3 id="musica"></h3>
-
-    <audio id="player" preload="none"></audio>
-
-    <div class="controles">
-      <i id="muteIcon" class="fa-solid fa-volume-high" title="Mudo"></i>
-      <input type="range" id="volume" min="0" max="1" step="0.1" value="1" title="Volume">
-      <div id="playBackground"><i id="playPause" class="fa-solid fa-stop stop" title="Pause"></i></div>
+  <div class="conteudo">
+    <div class="info">
+      <h2 id="cantor">Rádio Estância da Nostalgia</h2>
+      <h3 id="musica"></h3>
     </div>
 
-    <div id="status">🔄 Conectando...</div>
+    <div class="controles_status">
+      <div class="controles">
+        <i id="muteIcon" class="fa-solid fa-volume-high" title="Mudo"></i>
+        <input type="range" id="volume" min="0" max="1" step="0.1" value="1" title="Volume">
+        <div id="playBackground"><i id="playPause" class="fa-solid fa-stop stop" title="Pause"></i></div>
+      </div>
+      <div id="status">🔄 Conectando...</div>
+    </div>
   </div>
+
+  <audio id="player" preload="none"></audio>
 
   <div id="clock">
     <span><i class="fa-solid fa-clock"></i><span id="timeText"></span></span>

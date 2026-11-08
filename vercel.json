@@ -6,6 +6,16 @@
     { "src": "img/**", "use": "@vercel/static" }
   ],
   "routes": [
+    {
+      "src": "/(.*)",
+      "continue": true,
+      "headers": {
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "Content-Security-Policy": "frame-ancestors 'self' https://radioestanciadanostalgia.com https://www.radioestanciadanostalgia.com",
+        "Content-Security-Policy-Report-Only": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src https://cdnjs.cloudflare.com; img-src 'self' data: https:; media-src https://everest.servercast.com.br:1290; connect-src 'self' https://itunes.apple.com https://musicbrainz.org"
+      }
+    },
     { "src": "/api/meta", "dest": "/api/meta.js" },
     { "src": "/(.*)", "dest": "/$1" }
   ]

@@ -1,27 +1,26 @@
 export default async function handler(req, res) {
-  // ── CORS restrito ao próprio domínio ──────────────────────────────────────
-  const allowedOrigins = process.env.ALLOWED_ORIGIN
-    ? process.env.ALLOWED_ORIGIN.split(",").map(o => o.trim())
-    : [];
-
-  const origin = req.headers.origin || "";
-  if (allowedOrigins.length === 0 || !origin || allowedOrigins.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin || "*");
-  } else {
-    return res.status(403).json({ error: "Origem não permitida" });
-  }
-
-  res.setHeader("Cache-Control", "no-store");
-
-  // ── Apenas GET é aceito ───────────────────────────────────────────────────
+  //Apenas GET é aceito
   if (req.method !== "GET") {
     return res.status(405).json({ error: "Método não permitido" });
+  }
+
+  // CORS: sem ALLOWED_ORIGIN configurado, nenhuma origem externa é liberada
+  const allowedOrigins = (process.env.ALLOWED_ORIGIN || "")
+    .split(",").map(o => o.trim()).filter(Boolean);
+  const origin = req.headers.origin;
+
+  res.setHeader("Vary", "Origin");
+  if (origin) {
+    if (!allowedOrigins.includes(origin)) {
+      return res.status(403).json({ error: "Origem não permitida" });
+    }
+    res.setHeader("Access-Control-Allow-Origin", origin);
   }
 
   // ── Busca metadados do stream ─────────────────────────────────────────────
   try {
     const streamUrl =
-      "http://everest.servercast.com.br:1290/7.html?t=" + Date.now();
+      "https://everest.servercast.com.br:1290/7.html?t=" + Date.now();
 
     const response = await fetch(streamUrl, {
       headers: { "User-Agent": "Mozilla/5.0" },
@@ -78,6 +77,7 @@ export default async function handler(req, res) {
       }
     }
 
+    res.setHeader("Cache-Control", "s-maxage=10, stale-while-revalidate=20");
     return res.status(200).json({ artista, titulo, capaUrl });
 
   } catch (e) {

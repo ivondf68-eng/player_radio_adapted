@@ -489,7 +489,7 @@
      METADADOS VIA PROXY VERCEL
   ══════════════════════════════════════════ */
   function fetchMeta() {
-    fetch(META_URL + "?t=" + Date.now(), { cache: "no-store" })
+    fetch(META_URL)
       .then(r => r.json())
       .then(data => {
         const artista   = data.artista  || "";

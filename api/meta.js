@@ -4,6 +4,10 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Método não permitido" });
   }
 
+  if (req.url.includes("?")) {
+     return res.status(400).json({ error: "Parâmetros não permitidos" });
+   }
+
   // CORS: sem ALLOWED_ORIGIN configurado, nenhuma origem externa é liberada
   const allowedOrigins = (process.env.ALLOWED_ORIGIN || "")
     .split(",").map(o => o.trim()).filter(Boolean);

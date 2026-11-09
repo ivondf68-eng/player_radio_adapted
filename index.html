@@ -27,14 +27,32 @@
       min-height: 230px;
     }
 
-    #capa {
+    .capa-wrap {
       grid-area: capa;
+      position: relative;
       width: var(--capa-size);
       height: var(--capa-size);
+    }
+    #capa {
+      display: block;
+      width: 100%;
+      height: 100%;
       border-radius: 8px;
       object-fit: cover;
       background: #111;
       transition: opacity 0.4s;
+    }
+    .credito {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      padding: 8px 4px 3px;
+      font-size: 9px;
+      line-height: 1.15;
+      text-align: center;
+      color: #fff;
+      text-decoration: none;
+      background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
+      border-radius: 0 0 8px 8px;
     }
 
     .conteudo {
@@ -169,8 +187,12 @@
 <body>
 
 <header>
-  <img id="capa" src="img/logo.png" alt="Capa do álbum"
-    onerror="this.onerror=null;this.src='img/logo.png'">
+  <div class="capa-wrap">
+    <img id="capa" src="img/logo.png" alt="Capa do álbum"
+      onerror="this.onerror=null;this.src='img/logo.png'">
+    <a id="credito" class="credito" href="https://www.last.fm" target="_blank"
+      rel="noopener noreferrer" hidden>Capas: Last.fm, iTunes e MusicBrainz</a>
+  </div>
 
   <div class="conteudo">
     <div class="info">
@@ -373,6 +395,7 @@
   const cantorEl  = document.getElementById("cantor");
   const nomeEl    = document.getElementById("musica");
   const capaEl    = document.getElementById("capa");
+  const creditoEl = document.getElementById("credito");
   const volumeEl  = document.getElementById("volume");
   const playPause = document.getElementById("playPause");
   const muteIcon  = document.getElementById("muteIcon");
@@ -424,8 +447,8 @@
   ══════════════════════════════════════════ */
   function setCapa(url) {
     const img = new Image();
-    img.onload  = () => { capaEl.src = url; };
-    img.onerror = () => { capaEl.src = CAPA_PADRAO; };
+    img.onload  = () => { capaEl.src = url; creditoEl.hidden = false; };
+    img.onerror = () => { capaEl.src = CAPA_PADRAO; creditoEl.hidden = true; };
     img.src = url;
   }
 

@@ -145,6 +145,7 @@
     background: rgba(0,0,0,0.65);
   }
   #playPause.stop { color: #fff; } /* era #000, sumiria sobre o disco */
+  #playBackground { flex-shrink: 0; } /* evita o disco ser espremido */
 
   #playPause.stop { color: yellow; }
   #playPause.play { color: #0f0; }
@@ -180,6 +181,16 @@
     }
     #dateText {
       margin-left: 0;
+    }
+    #playBackground {
+      width: 56px;
+      height: 56px;
+    }
+    #playPause {
+      width: 24px;
+      height: 24px;
+      line-height: 24px;
+      font-size: 14px;
     }
   }
   @media (max-width: 370px){

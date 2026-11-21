@@ -119,7 +119,9 @@
     position: absolute;
     inset: 0;
     border-radius: 50%;
-    background: url(../img/logo.png) center / 140% no-repeat, #000;
+    background-color: #000;
+    background-position: center;
+    background-repeat: no-repeat;
     border: 3px solid #000;
     box-shadow: 0 2px 6px rgba(0,0,0,0.5);
     animation: girar 4s linear infinite;
@@ -501,10 +503,17 @@
      CAPA — cascata iTunes → MusicBrainz
      Last.fm agora é buscado no servidor (api/meta.js)
   ══════════════════════════════════════════ */
+  function aplicarCapa(url) {
+    capaEl.src = url;
+    disco.style.backgroundImage = `url("${url}")`;
+    // a logo precisa de zoom para o medalhão preencher o círculo, a capa de álbum não
+    disco.style.backgroundSize = (url === CAPA_PADRAO) ? "140%" : "cover";
+  }
+
   function setCapa(url) {
     const img = new Image();
-    img.onload  = () => { capaEl.src = url; creditoEl.hidden = false; };
-    img.onerror = () => { capaEl.src = CAPA_PADRAO; creditoEl.hidden = true; };
+    img.onload  = () => { aplicarCapa(url); };
+    img.onerror = () => { aplicarCapa(CAPA_PADRAO); };
     img.src = url;
   }
 
@@ -561,7 +570,7 @@
     const encontrouMB = await buscarMusicBrainz(artista, titulo);
     if (encontrouMB) return;
 
-    capaEl.src = CAPA_PADRAO;
+    aplicarCapa(CAPA_PADRAO);
     creditoEl.hidden = true;
   }
 
@@ -662,6 +671,7 @@
   setInterval(updateClock, 1000);
   updateClock();
 
+  aplicarCapa(CAPA_PADRAO);
   fetchMeta();
   metaInterval = setInterval(fetchMeta, 10000);
 

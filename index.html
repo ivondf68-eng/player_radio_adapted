@@ -41,6 +41,7 @@
       object-fit: cover;
       background: #111;
       transition: opacity 0.4s;
+      object-position: center top;
     }
     .credito {
       position: absolute;
@@ -447,6 +448,10 @@
     "Zezinho e Julieta":       "https://www.letras.mus.br/zezinho-julieta/discografia/",
   };
 
+  const CAPAS_LOCAIS = {
+    "Gilberto Gomes":       "assets/capa/gilberto_gomes.jpg",
+  };
+
   const audio     = document.getElementById("player");
   const cantorEl  = document.getElementById("cantor");
   const nomeEl    = document.getElementById("musica");
@@ -556,6 +561,13 @@
 
   async function buscarCapa(artista, titulo, capaUrlServidor) {
     if (!artista && !titulo) return;
+
+    const capaLocal = CAPAS_LOCAIS[artista] || CAPAS_LOCAIS[artistaPrincipal(artista)];
+    
+    if (capaLocal) {
+      setCapa(capaLocal);
+      return;
+    }
 
     // 1) Capa já resolvida pelo servidor via Last.fm (chave fica no backend)
     if (capaUrlServidor) {

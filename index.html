@@ -565,7 +565,10 @@
   }
 
   async function buscarCapa(artista, titulo, capaUrlServidor) {
-    if (!artista && !titulo) return;
+    if (!artista && !titulo) {
+      aplicarCapa(CAPA_PADRAO);
+      return;
+    }
 
     const capaLocal = CAPAS_LOCAIS[artista] || CAPAS_LOCAIS[artistaPrincipal(artista)];
 

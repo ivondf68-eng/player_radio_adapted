@@ -47,7 +47,7 @@
       position: absolute;
       left: 0; right: 0; bottom: 0;
       padding: 8px 4px 3px;
-      font-size: 10px;
+      font-size: 8px;
       line-height: 1.15;
       text-align: center;
       color: #fff;
@@ -512,6 +512,9 @@
     disco.style.backgroundImage = `url("${url}")`;
     // a logo precisa de zoom para o medalhão preencher o círculo, a capa de álbum não
     disco.style.backgroundSize = (url === CAPA_PADRAO) ? "140%" : "cover";
+
+    const vemDeApi = url !== CAPA_PADRAO && !url.startsWith("assets/");
+    creditoEl.hidden = !vemDeApi;
   }
 
   function setCapa(url) {
